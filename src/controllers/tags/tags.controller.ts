@@ -1,39 +1,20 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
-import { TagsService } from './tags.service';
+import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import { TagEntity } from "../../entities/tag.entity";
 
-@Controller('tags')
-export class TagsController {
-    constructor(
-        private readonly _tagsService: TagsService
-    ) { }
+import { BaseController } from "../base.controller";
 
-    @Get()
-    async getAll() {
-        return this._tagsService.getAll();
-    }
+import { CreateTagDto } from "./dto/create-tag.dto";
+import { UpdateTagDto } from "./dto/update-tag.dto";
+import { TagsService } from "./tags.service";
 
-    @Get(':id')
-    async getById(
-        @Param('id')
-        id: string
-    ) {
-        return this._tagsService.getById(id);
-    }
-
-    @Post()
-    async create(@Body() body: CreateTagDto) {
-        return this._tagsService.create(body);
-    }
-
-    @Patch(':id')
-    async update(
-        @Param('id')
-        id: string,
-        @Body()
-        body: UpdateTagDto
-    ) {
-        return this._tagsService.update(id, body);
-    }
+@Controller("tags")
+export class TagsController extends BaseController<
+  TagEntity,
+  TagsService,
+  CreateTagDto,
+  UpdateTagDto
+> {
+  constructor(private readonly _tagsService: TagsService) {
+    super(_tagsService);
+  }
 }

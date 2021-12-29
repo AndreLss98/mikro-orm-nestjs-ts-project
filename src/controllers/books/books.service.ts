@@ -8,14 +8,17 @@ import { UpdateBookDto } from './dto/update-book.dto';
 
 import { BookEntity } from '../../entities/book.entity';
 import { TagEntity } from '../../entities/tag.entity';
+import { BaseService } from '../base.service';
 
 @Injectable()
-export class BooksService {
+export class BooksService extends BaseService<BookEntity, CreateBookDto, UpdateBookDto> {
     constructor(
         @InjectRepository(BookEntity)
         private readonly _bookRepository: EntityRepository<BookEntity>,
         private readonly em: EntityManager,
-    ) { }
+    ) {
+        super();
+    }
 
     async getAll(): Promise<BookEntity[]> {
         return this._bookRepository.findAll(['tags']);
