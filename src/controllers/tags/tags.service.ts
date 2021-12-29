@@ -1,9 +1,11 @@
-import { Collection, EntityRepository, wrap } from '@mikro-orm/core';
+import { EntityRepository, wrap } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
-import { BookEntity } from '../entities/book.entity';
-import { TagEntity } from '../entities/tag.entity';
+
+import { BookEntity } from '../../entities/book.entity';
+import { TagEntity } from '../../entities/tag.entity';
+
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
@@ -36,20 +38,28 @@ export class TagsService {
         await em.begin();
 
         try {
-            const tag = await this._tagRepository.findOneOrFail({id}, ['books']);
-            
-            for(let book of tag.books) {
-                await book.tags.init();
-                book.tags.remove(tag);
-                em.persist(book);
+            const tag = await this._tagRepository.findOneOrFail({id});
+
+            if (dto.books) {
+                await tag.books.init();
+
+                for(let book of tag.books) {
+                    await book.tags.init();
+                    book.tags.remove(tag);
+                    em.persist(book);
+                }
+
+                tag.books.removeAll();
+
+                dto.books.forEach(book => {
+                    const ref = em.getReference(BookEntity, book.id);
+                    tag.books.add(ref);
+                });
+    
+                delete dto.books;
             }
+            
 
-            dto.books.forEach(book => {
-                const ref = em.getReference(BookEntity, book.id);
-                tag.books.add(ref);
-            });
-
-            delete dto.books;
             const to_save = wrap(tag).assign(dto);
             em.persist(to_save);
             await em.commit();

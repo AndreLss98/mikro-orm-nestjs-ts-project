@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Collection, EntityRepository, wrap } from '@mikro-orm/core';
+import { EntityRepository, wrap } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/postgresql';
 
-import { BookEntity } from '../entities/book.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { TagEntity } from '../entities/tag.entity';
+
+import { BookEntity } from '../../entities/book.entity';
+import { TagEntity } from '../../entities/tag.entity';
 
 @Injectable()
 export class BooksService {
@@ -48,14 +49,17 @@ export class BooksService {
 
         try {
             const book = await this._bookRepository.findOneOrFail({id});
-            
-            await book.tags.init();
-            book.tags.removeAll();
-            dto.tags.forEach(tag => {
-                const ref = em.getReference(TagEntity, tag.id);
-                book.tags.add(ref);
-            });
-            delete dto.tags;
+
+            if (dto.tags) {
+                await book.tags.init();
+                book.tags.removeAll();
+                dto.tags.forEach(tag => {
+                    const ref = em.getReference(TagEntity, tag.id);
+                    book.tags.add(ref);
+                });
+                delete dto.tags;
+            }
+
             const to_save = wrap(book).assign(dto);
             em.persist(to_save);
             await em.commit();

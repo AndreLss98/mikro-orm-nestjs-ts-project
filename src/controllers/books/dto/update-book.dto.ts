@@ -1,4 +1,4 @@
-import { TagEntity } from "../../entities/tag.entity";
+import { TagEntity } from "../../../entities/tag.entity";
 
 export class UpdateBookDto {
     title: string;
