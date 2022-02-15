@@ -28,7 +28,7 @@ export class TagsService extends BaseService<
     return this._tagRepository.findAll(["books"]);
   }
 
-  async getById(id: string): Promise<TagEntity> {
+  async getById(id: number): Promise<TagEntity> {
     return this._tagRepository.findOne(
       { id },
       {
@@ -43,7 +43,7 @@ export class TagsService extends BaseService<
     return tag;
   }
 
-  async update(id: string, dto: UpdateTagDto): Promise<TagEntity> {
+  async update(id: number, dto: UpdateTagDto): Promise<TagEntity> {
     const em = this.em.fork(false);
     await em.begin();
 

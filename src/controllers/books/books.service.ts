@@ -24,7 +24,7 @@ export class BooksService extends BaseService<BookEntity, CreateBookDto, UpdateB
         return this._bookRepository.findAll(['tags']);
     }
 
-    async getById(id: string): Promise<BookEntity> {
+    async getById(id: number): Promise<BookEntity> {
         return this._bookRepository.findOne({id}, {
             fields: ['title']
         });
@@ -46,7 +46,7 @@ export class BooksService extends BaseService<BookEntity, CreateBookDto, UpdateB
         }
     }
 
-    async update(id: string, dto: UpdateBookDto) {
+    async update(id: number, dto: UpdateBookDto) {
         const em = this.em.fork(false);
         await em.begin();
 

@@ -17,7 +17,7 @@ export abstract class BaseController<
   @Get(":id")
   async getById(
     @Param("id")
-    id: string
+    id: number
   ): Promise<Entity> {
     return this._service.getById(id);
   }
@@ -30,7 +30,7 @@ export abstract class BaseController<
   @Patch(":id")
   async update(
     @Param("id")
-    id: string,
+    id: number,
     @Body()
     body: UpdateDto
   ): Promise<Entity> {
