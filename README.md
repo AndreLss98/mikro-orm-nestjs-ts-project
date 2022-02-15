@@ -24,6 +24,9 @@ docker-compose up -d
 
 # start project in dev mode
 yarn start:dev
+
+# Run unit tests
+yarn test
 ```
 
 ## License
